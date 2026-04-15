@@ -21,9 +21,7 @@ class DashboardScreen extends StatelessWidget {
     return Stack(
       children: [
         Scaffold(
-          backgroundColor: AppColors.background,
           appBar: AppBar(
-            backgroundColor: AppColors.surface,
             elevation: 0,
             automaticallyImplyLeading: false,
             titleSpacing: 16,
@@ -39,7 +37,6 @@ class DashboardScreen extends StatelessWidget {
                       fontFamily: 'NotoSans',
                       fontSize: 13,
                       fontWeight: FontWeight.w400,
-                      color: AppColors.textSecondary,
                     ),
                   ),
                   Text(
@@ -48,7 +45,6 @@ class DashboardScreen extends StatelessWidget {
                       fontFamily: 'NotoSans',
                       fontSize: 17,
                       fontWeight: FontWeight.w700,
-                      color: AppColors.textPrimary,
                     ),
                   ),
                 ],
@@ -140,13 +136,13 @@ class DashboardScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                        Text(
                           'Quick Actions',
                           style: TextStyle(
                             fontFamily: 'NotoSans',
                             fontSize: 15,
                             fontWeight: FontWeight.w700,
-                            color: AppColors.textPrimary,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
                         const SizedBox(height: 12),
@@ -212,13 +208,13 @@ class DashboardScreen extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text(
+                            Text(
                               'Recent Invoices',
                               style: TextStyle(
                                 fontFamily: 'NotoSans',
                                 fontSize: 15,
                                 fontWeight: FontWeight.w700,
-                                color: AppColors.textPrimary,
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
                             ),
                             TextButton(
@@ -386,8 +382,9 @@ class _QuickActionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Material(
-      color: AppColors.surface,
+      color: theme.colorScheme.surface,
       borderRadius: BorderRadius.circular(16),
       child: InkWell(
         onTap: onTap,
@@ -420,11 +417,11 @@ class _QuickActionCard extends StatelessWidget {
               Text(
                 label,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: 'NotoSans',
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.textPrimary,
+                  color: theme.colorScheme.onSurface,
                 ),
               ),
             ],
@@ -455,8 +452,9 @@ class _RecentInvoiceTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Material(
-      color: AppColors.surface,
+      color: theme.colorScheme.surface,
       borderRadius: BorderRadius.circular(12),
       child: InkWell(
         onTap: onTap,
@@ -465,7 +463,7 @@ class _RecentInvoiceTile extends StatelessWidget {
           margin: const EdgeInsets.only(bottom: 8),
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
           decoration: BoxDecoration(
-            border: Border.all(color: AppColors.border, width: 0.5),
+            border: Border.all(color: theme.colorScheme.outlineVariant, width: 0.5),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
@@ -474,7 +472,7 @@ class _RecentInvoiceTile extends StatelessWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: AppColors.primaryLight,
+                  color: theme.colorScheme.primaryContainer,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Icon(Icons.receipt_rounded,
@@ -487,20 +485,20 @@ class _RecentInvoiceTile extends StatelessWidget {
                   children: [
                     Text(
                       invoiceNumber,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontFamily: 'NotoSans',
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.textPrimary,
+                        color: theme.colorScheme.onSurface,
                       ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       clientName,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontFamily: 'NotoSans',
                         fontSize: 11,
-                        color: AppColors.textSecondary,
+                        color: theme.colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -511,11 +509,11 @@ class _RecentInvoiceTile extends StatelessWidget {
                 children: [
                   Text(
                     amount,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: 'NotoSans',
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
-                      color: AppColors.textPrimary,
+                      color: theme.colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -533,33 +531,34 @@ class _RecentInvoiceTile extends StatelessWidget {
 class _EmptyInvoices extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.border, width: 0.5),
+        border: Border.all(color: theme.colorScheme.outlineVariant, width: 0.5),
       ),
-      child: const Column(
+      child: Column(
         children: [
-          Icon(Icons.receipt_long_outlined, size: 48, color: AppColors.textHint),
-          SizedBox(height: 12),
+          Icon(Icons.receipt_long_outlined, size: 48, color: theme.colorScheme.outline),
+          const SizedBox(height: 12),
           Text(
             'No invoices yet',
             style: TextStyle(
               fontFamily: 'NotoSans',
               fontSize: 14,
               fontWeight: FontWeight.w600,
-              color: AppColors.textSecondary,
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
-          SizedBox(height: 4),
+          const SizedBox(height: 4),
           Text(
             'Create your first invoice to get started',
             style: TextStyle(
               fontFamily: 'NotoSans',
               fontSize: 12,
-              color: AppColors.textHint,
+              color: theme.colorScheme.outline,
             ),
           ),
         ],

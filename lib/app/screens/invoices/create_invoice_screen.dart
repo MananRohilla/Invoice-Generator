@@ -18,17 +18,6 @@ class CreateInvoiceScreen extends GetView<CreateInvoiceController> {
       appBar: AppBar(
         title: Obx(() => Text(
             controller.isEditing.value ? 'Edit Invoice' : 'New Invoice')),
-        actions: [
-          TextButton(
-            onPressed: controller.saveAsDraft,
-            child: const Text('SAVE DRAFT',
-                style: TextStyle(
-                    fontFamily: 'NotoSans',
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 13)),
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 120),
@@ -517,56 +506,31 @@ class CreateInvoiceScreen extends GetView<CreateInvoiceController> {
           color: AppColors.surface,
           border: Border(top: BorderSide(color: AppColors.border, width: 0.5)),
         ),
-        child: Row(
-          children: [
-            // Save Draft — outlined
-            Expanded(
-              child: SizedBox(
-                height: 52,
-                child: OutlinedButton(
-                  onPressed: controller.saveAsDraft,
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: AppColors.primary,
-                    side: const BorderSide(color: AppColors.primary, width: 1.5),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
-                  ),
-                  child: const Text('SAVE DRAFT',
-                      style: TextStyle(
-                          fontFamily: 'NotoSans',
-                          fontWeight: FontWeight.w700,
-                          fontSize: 13)),
+        child: SizedBox(
+          width: double.infinity,
+          height: 52,
+          child: GestureDetector(
+            onTap: controller.generateInvoice,
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF9333EA), Color(0xFF7C3AED)],
                 ),
+                borderRadius: BorderRadius.circular(12),
               ),
-            ),
-            const SizedBox(width: 12),
-            // Mark as Sent — gradient filled
-            Expanded(
-              child: GestureDetector(
-                onTap: controller.generateInvoice,
-                child: Container(
-                  height: 52,
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF9333EA), Color(0xFF7C3AED)],
-                    ),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Center(
-                    child: Text(
-                      'MARK AS SENT',
-                      style: TextStyle(
-                        fontFamily: 'NotoSans',
-                        fontWeight: FontWeight.w700,
-                        fontSize: 13,
-                        color: Colors.white,
-                      ),
-                    ),
+              child: const Center(
+                child: Text(
+                  'GENERATE INVOICE',
+                  style: TextStyle(
+                    fontFamily: 'NotoSans',
+                    fontWeight: FontWeight.w700,
+                    fontSize: 13,
+                    color: Colors.white,
                   ),
                 ),
               ),
             ),
-          ],
+          ),
         ),
       ),
     );

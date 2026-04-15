@@ -10,14 +10,15 @@ class LoginScreen extends GetView<AuthController> {
 
   @override
   Widget build(BuildContext context) {
+    final scaffoldBg = Theme.of(context).scaffoldBackgroundColor;
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF7C3AED), Color(0xFFEDE9FE), Colors.white],
+            colors: [const Color(0xFF7C3AED), const Color(0xFFEDE9FE), scaffoldBg],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            stops: [0.0, 0.55, 1.0],
+            stops: const [0.0, 0.55, 1.0],
           ),
         ),
         child: SafeArea(
@@ -108,11 +109,12 @@ class _SignInCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(24, 28, 24, 24),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
@@ -133,33 +135,33 @@ class _SignInCard extends StatelessWidget {
             : Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Text(
+                  Text(
                     'Welcome back',
                     style: TextStyle(
                       fontFamily: 'NotoSans',
                       fontSize: 22,
                       fontWeight: FontWeight.w700,
-                      color: AppColors.textPrimary,
+                      color: theme.colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 4),
-                  const Text(
+                  Text(
                     'Sign in to continue to your ledger',
                     style: TextStyle(
                       fontFamily: 'NotoSans',
                       fontSize: 13,
-                      color: AppColors.textSecondary,
+                      color: theme.colorScheme.onSurfaceVariant,
                     ),
                   ),
                   const SizedBox(height: 24),
 
                   // Work Email label + field
-                  const Text('Work Email',
+                  Text('Work Email',
                       style: TextStyle(
                           fontFamily: 'NotoSans',
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
-                          color: AppColors.textSecondary)),
+                          color: theme.colorScheme.onSurfaceVariant)),
                   const SizedBox(height: 6),
                   TextField(
                     controller: controller.emailController,
@@ -167,19 +169,19 @@ class _SignInCard extends StatelessWidget {
                     style: const TextStyle(fontFamily: 'NotoSans', fontSize: 14),
                     decoration: InputDecoration(
                       hintText: 'you@business.com',
-                      hintStyle: const TextStyle(
+                      hintStyle: TextStyle(
                           fontFamily: 'NotoSans',
                           fontSize: 14,
-                          color: AppColors.textHint),
+                          color: theme.colorScheme.outline),
                       filled: true,
-                      fillColor: const Color(0xFFF8F9FA),
+                      fillColor: theme.colorScheme.surfaceContainerHighest,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: AppColors.border),
+                        borderSide: BorderSide(color: theme.colorScheme.outlineVariant),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: AppColors.border),
+                        borderSide: BorderSide(color: theme.colorScheme.outlineVariant),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -197,12 +199,12 @@ class _SignInCard extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text('Password',
+                      Text('Password',
                           style: TextStyle(
                               fontFamily: 'NotoSans',
                               fontSize: 12,
                               fontWeight: FontWeight.w500,
-                              color: AppColors.textSecondary)),
+                              color: theme.colorScheme.onSurfaceVariant)),
                       Text('Forgot Access?',
                           style: TextStyle(
                               fontFamily: 'NotoSans',
@@ -303,31 +305,32 @@ class _PasswordFieldState extends State<_PasswordField> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return TextField(
       controller: widget.controller.passwordController,
       obscureText: _obscure,
       style: const TextStyle(fontFamily: 'NotoSans', fontSize: 14),
       decoration: InputDecoration(
         hintText: '••••••••',
-        hintStyle: const TextStyle(
-            fontFamily: 'NotoSans', fontSize: 14, color: AppColors.textHint),
+        hintStyle: TextStyle(
+            fontFamily: 'NotoSans', fontSize: 14, color: theme.colorScheme.outline),
         suffixIcon: IconButton(
           icon: Icon(
             _obscure ? Icons.visibility_off_outlined : Icons.visibility_outlined,
             size: 20,
-            color: AppColors.textHint,
+            color: theme.colorScheme.outline,
           ),
           onPressed: () => setState(() => _obscure = !_obscure),
         ),
         filled: true,
-        fillColor: const Color(0xFFF8F9FA),
+        fillColor: theme.colorScheme.surfaceContainerHighest,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.border),
+          borderSide: BorderSide(color: theme.colorScheme.outlineVariant),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.border),
+          borderSide: BorderSide(color: theme.colorScheme.outlineVariant),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -347,9 +350,10 @@ class _OrDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Row(
       children: [
-        const Expanded(child: Divider(color: AppColors.border, thickness: 1)),
+        Expanded(child: Divider(color: theme.colorScheme.outlineVariant, thickness: 1)),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Text(
@@ -358,11 +362,11 @@ class _OrDivider extends StatelessWidget {
               fontFamily: 'NotoSans',
               fontSize: 12,
               fontWeight: FontWeight.w500,
-              color: AppColors.textHint,
+              color: theme.colorScheme.outline,
             ),
           ),
         ),
-        const Expanded(child: Divider(color: AppColors.border, thickness: 1)),
+        Expanded(child: Divider(color: theme.colorScheme.outlineVariant, thickness: 1)),
       ],
     );
   }
@@ -375,13 +379,14 @@ class _GoogleButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return SizedBox(
       height: 52,
       child: OutlinedButton(
         onPressed: onPressed,
         style: OutlinedButton.styleFrom(
-          backgroundColor: Colors.white,
-          side: const BorderSide(color: AppColors.border, width: 1.5),
+          backgroundColor: theme.colorScheme.surface,
+          side: BorderSide(color: theme.colorScheme.outlineVariant, width: 1.5),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
@@ -392,13 +397,13 @@ class _GoogleButton extends StatelessWidget {
           children: [
             SvgPicture.asset('assets/google_icon.svg', width: 22, height: 22),
             const SizedBox(width: 12),
-            const Text(
+            Text(
               'Continue with Google',
               style: TextStyle(
                 fontFamily: 'NotoSans',
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
+                color: theme.colorScheme.onSurface,
               ),
             ),
           ],
@@ -416,18 +421,19 @@ class _FooterBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final color = Theme.of(context).colorScheme.onSurfaceVariant;
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 12, color: AppColors.textSecondary),
+        Icon(icon, size: 12, color: color),
         const SizedBox(width: 4),
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontFamily: 'NotoSans',
             fontSize: 10,
             fontWeight: FontWeight.w500,
-            color: AppColors.textSecondary,
+            color: color,
             letterSpacing: 0.5,
           ),
         ),

@@ -14,7 +14,6 @@ class InvoiceDetailsScreen extends GetView<InvoiceDetailsController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
       appBar: AppBar(
         title: const Text('Invoice Details'),
         actions: [
@@ -39,6 +38,8 @@ class InvoiceDetailsScreen extends GetView<InvoiceDetailsController> {
 
         final isPaid = inv.status == 'paid';
         final paymentCount = inv.paymentMade > 0 ? 1 : 0;
+        final theme = Theme.of(context);
+        final isDark = theme.brightness == Brightness.dark;
 
         return SingleChildScrollView(
           child: Column(
@@ -46,7 +47,7 @@ class InvoiceDetailsScreen extends GetView<InvoiceDetailsController> {
             children: [
               // ── Status Header ────────────────────────────────────────────
               Container(
-                color: AppColors.successLight,
+                color: isDark ? theme.colorScheme.surfaceContainerHigh : AppColors.successLight,
                 padding: const EdgeInsets.symmetric(vertical: 28),
                 child: Column(
                   children: [
@@ -74,21 +75,21 @@ class InvoiceDetailsScreen extends GetView<InvoiceDetailsController> {
                               : inv.status == 'overdue'
                                   ? 'Payment Overdue'
                                   : 'Draft Invoice',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontFamily: 'NotoSans',
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.textPrimary,
+                        color: theme.colorScheme.onSurface,
                       ),
                     ),
                     const SizedBox(height: 6),
                     Text(
                       CurrencyFormatter.format(inv.total),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontFamily: 'NotoSans',
                         fontSize: 28,
                         fontWeight: FontWeight.w700,
-                        color: AppColors.textPrimary,
+                        color: theme.colorScheme.onSurface,
                       ),
                     ),
                   ],
@@ -112,7 +113,7 @@ class InvoiceDetailsScreen extends GetView<InvoiceDetailsController> {
                       children: [
                         CircleAvatar(
                           radius: 20,
-                          backgroundColor: AppColors.primaryLight,
+                          backgroundColor: theme.colorScheme.primaryContainer,
                           child: Text(
                             client.initials,
                             style: const TextStyle(
@@ -127,16 +128,16 @@ class InvoiceDetailsScreen extends GetView<InvoiceDetailsController> {
                         Expanded(
                           child: Text(
                             client.name,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontFamily: 'NotoSans',
                               fontSize: 15,
                               fontWeight: FontWeight.w600,
-                              color: AppColors.textPrimary,
+                              color: theme.colorScheme.onSurface,
                             ),
                           ),
                         ),
-                        const Icon(Icons.chevron_right_rounded,
-                            color: AppColors.textSecondary),
+                        Icon(Icons.chevron_right_rounded,
+                            color: theme.colorScheme.onSurfaceVariant),
                       ],
                     ),
                   ),
@@ -159,7 +160,7 @@ class InvoiceDetailsScreen extends GetView<InvoiceDetailsController> {
                           width: 40,
                           height: 40,
                           decoration: BoxDecoration(
-                            color: AppColors.primaryLight,
+                            color: theme.colorScheme.primaryContainer,
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: const Icon(
@@ -172,16 +173,16 @@ class InvoiceDetailsScreen extends GetView<InvoiceDetailsController> {
                         Expanded(
                           child: Text(
                             '$paymentCount Payment${paymentCount == 1 ? '' : 's'} Received',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontFamily: 'NotoSans',
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
-                              color: AppColors.textPrimary,
+                              color: theme.colorScheme.onSurface,
                             ),
                           ),
                         ),
-                        const Icon(Icons.chevron_right_rounded,
-                            color: AppColors.textSecondary),
+                        Icon(Icons.chevron_right_rounded,
+                            color: theme.colorScheme.onSurfaceVariant),
                       ],
                     ),
                   ),
@@ -276,11 +277,11 @@ class InvoiceDetailsScreen extends GetView<InvoiceDetailsController> {
                     children: [
                       Text(
                         'Items (${inv.items.length})',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontFamily: 'NotoSans',
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
-                          color: AppColors.textPrimary,
+                          color: theme.colorScheme.onSurface,
                         ),
                       ),
                       const SizedBox(height: 12),
@@ -296,20 +297,20 @@ class InvoiceDetailsScreen extends GetView<InvoiceDetailsController> {
                                     children: [
                                       Text(
                                         item.description,
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           fontFamily: 'NotoSans',
                                           fontSize: 14,
                                           fontWeight: FontWeight.w600,
-                                          color: AppColors.textPrimary,
+                                          color: theme.colorScheme.onSurface,
                                         ),
                                       ),
                                       const SizedBox(height: 2),
                                       Text(
                                         '${item.quantity % 1 == 0 ? item.quantity.toInt() : item.quantity} × ${CurrencyFormatter.format(item.rate)}',
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           fontFamily: 'NotoSans',
                                           fontSize: 12,
-                                          color: AppColors.textSecondary,
+                                          color: theme.colorScheme.onSurfaceVariant,
                                         ),
                                       ),
                                     ],
@@ -317,11 +318,11 @@ class InvoiceDetailsScreen extends GetView<InvoiceDetailsController> {
                                 ),
                                 Text(
                                   CurrencyFormatter.format(item.amount),
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontFamily: 'NotoSans',
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
-                                    color: AppColors.textPrimary,
+                                    color: theme.colorScheme.onSurface,
                                   ),
                                 ),
                               ],
@@ -403,10 +404,9 @@ class InvoiceDetailsScreen extends GetView<InvoiceDetailsController> {
             top: 10,
             bottom: MediaQuery.of(context).padding.bottom + 10,
           ),
-          decoration: const BoxDecoration(
-            color: AppColors.surface,
-            border:
-                Border(top: BorderSide(color: AppColors.border, width: 0.5)),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            border: Border(top: BorderSide(color: Theme.of(context).colorScheme.outlineVariant, width: 0.5)),
           ),
           child: Row(
             children: [
@@ -534,6 +534,16 @@ class InvoiceDetailsScreen extends GetView<InvoiceDetailsController> {
                   controller.markAsPaid();
                 },
               ),
+            if (inv.status == 'paid')
+              ListTile(
+                leading: const Icon(Icons.send_outlined, color: AppColors.primary),
+                title: const Text('Mark as Sent',
+                    style: TextStyle(fontFamily: 'NotoSans')),
+                onTap: () {
+                  Get.back();
+                  controller.markAsSent();
+                },
+              ),
             ListTile(
               leading:
                   const Icon(Icons.edit_outlined, color: AppColors.primary),
@@ -569,13 +579,14 @@ class _DetailCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Container(
         decoration: BoxDecoration(
-          color: AppColors.surface,
+          color: theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.border, width: 0.5),
+          border: Border.all(color: theme.colorScheme.outlineVariant, width: 0.5),
           boxShadow: const [
             BoxShadow(
               color: AppColors.cardShadow,
@@ -600,24 +611,25 @@ class _MetaRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Row(
       children: [
         Text(
           '$label:  ',
-          style: const TextStyle(
+          style: TextStyle(
             fontFamily: 'NotoSans',
             fontSize: 13,
-            color: AppColors.textSecondary,
+            color: theme.colorScheme.onSurfaceVariant,
           ),
         ),
         Expanded(
           child: Text(
             value,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'NotoSans',
               fontSize: 13,
               fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
+              color: theme.colorScheme.onSurface,
             ),
           ),
         ),
@@ -649,7 +661,7 @@ class _BottomIconBtn extends StatelessWidget {
           width: 44,
           height: 44,
           decoration: BoxDecoration(
-            color: AppColors.surfaceVariant,
+            color: Theme.of(context).colorScheme.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(10),
           ),
           child: Icon(

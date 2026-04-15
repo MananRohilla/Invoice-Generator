@@ -307,7 +307,7 @@ class CreateInvoiceController extends GetxController {
         ..applyGst = applyGst.value
         ..gstPercent = gstPercent.value
         ..isInterState = isInterState.value
-        ..status = 'sent'
+        ..status = 'paid'
         ..notes = notesController.text.trim()
         ..terms = selectedTerms.value
         ..paymentMade = paid;
@@ -324,7 +324,7 @@ class CreateInvoiceController extends GetxController {
         applyGst: applyGst.value,
         gstPercent: gstPercent.value,
         isInterState: isInterState.value,
-        status: 'sent',
+        status: 'paid',
         notes: notesController.text.trim(),
         terms: selectedTerms.value,
         paymentMade: paid,
@@ -489,6 +489,16 @@ class InvoiceDetailsController extends GetxController {
     await HiveService.updateInvoice(inv);
     invoice.refresh();
     AppToast.show('Invoice marked as paid!', title: 'Paid', type: ToastType.success);
+  }
+
+  Future<void> markAsSent() async {
+    final inv = invoice.value;
+    if (inv == null) return;
+    inv.status = 'sent';
+    inv.paymentMade = 0;
+    await HiveService.updateInvoice(inv);
+    invoice.refresh();
+    AppToast.show('Invoice marked as sent.', title: 'Status Updated', type: ToastType.success);
   }
 
   Future<void> viewPdf() async {

@@ -11,23 +11,12 @@ class ReportsScreen extends GetView<ReportsController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: AppColors.surface,
         elevation: 0,
-        title: const Text(
-          'Reports',
-          style: TextStyle(
-            fontFamily: 'NotoSans',
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-            color: AppColors.textPrimary,
-          ),
-        ),
+        title: const Text('Reports'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.download_outlined,
-                color: AppColors.textPrimary),
+            icon: const Icon(Icons.download_outlined),
             onPressed: () {},
           ),
         ],
@@ -134,12 +123,12 @@ class ReportsScreen extends GetView<ReportsController> {
             // ── Monthly Revenue ────────────────────────────────────────────
             _SectionHeader(title: 'Revenue Growth'),
             const SizedBox(height: 4),
-            const Text(
+            Text(
               'Last 6 months performance',
               style: TextStyle(
                 fontFamily: 'NotoSans',
                 fontSize: 12,
-                color: AppColors.textHint,
+                color: Theme.of(context).colorScheme.outline,
               ),
             ),
             const SizedBox(height: 12),
@@ -296,11 +285,11 @@ class _SectionHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       title,
-      style: const TextStyle(
+      style: TextStyle(
         fontFamily: 'NotoSans',
         fontSize: 16,
         fontWeight: FontWeight.w700,
-        color: AppColors.textPrimary,
+        color: Theme.of(context).colorScheme.onSurface,
       ),
     );
   }
@@ -316,7 +305,7 @@ class _SectionCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -426,6 +415,7 @@ class _LegendRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final pct = total > 0 ? (count / total * 100).round() : 0;
     return Row(
       children: [
@@ -437,10 +427,10 @@ class _LegendRow extends StatelessWidget {
         const SizedBox(width: 8),
         Expanded(
           child: Text(label,
-              style: const TextStyle(
+              style: TextStyle(
                   fontFamily: 'NotoSans',
                   fontSize: 13,
-                  color: AppColors.textSecondary)),
+                  color: theme.colorScheme.onSurfaceVariant)),
         ),
         Text('$count',
             style: TextStyle(
@@ -453,10 +443,10 @@ class _LegendRow extends StatelessWidget {
           width: 36,
           child: Text('$pct%',
               textAlign: TextAlign.right,
-              style: const TextStyle(
+              style: TextStyle(
                   fontFamily: 'NotoSans',
                   fontSize: 12,
-                  color: AppColors.textHint)),
+                  color: theme.colorScheme.outline)),
         ),
       ],
     );
@@ -472,16 +462,17 @@ class _GradientBarColumn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         if (value > 0)
           Text(
             CurrencyFormatter.compact(value),
-            style: const TextStyle(
+            style: TextStyle(
                 fontFamily: 'NotoSans',
                 fontSize: 9,
-                color: AppColors.textHint),
+                color: theme.colorScheme.outline),
           ),
         const SizedBox(height: 4),
         AnimatedContainer(
@@ -499,10 +490,10 @@ class _GradientBarColumn extends StatelessWidget {
         ),
         const SizedBox(height: 6),
         Text(label,
-            style: const TextStyle(
+            style: TextStyle(
                 fontFamily: 'NotoSans',
                 fontSize: 11,
-                color: AppColors.textSecondary)),
+                color: theme.colorScheme.onSurfaceVariant)),
       ],
     );
   }
@@ -521,13 +512,14 @@ class _ClientRevenueRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10),
       decoration: BoxDecoration(
         border: isLast
             ? null
-            : const Border(
-                bottom: BorderSide(color: AppColors.border, width: 0.5)),
+            : Border(
+                bottom: BorderSide(color: theme.colorScheme.outlineVariant, width: 0.5)),
       ),
       child: Row(
         children: [
@@ -537,7 +529,7 @@ class _ClientRevenueRow extends StatelessWidget {
             decoration: BoxDecoration(
               color: rank == 1
                   ? const Color(0xFFFBBC04).withOpacity(0.2)
-                  : AppColors.primaryLight,
+                  : theme.colorScheme.primaryContainer,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Center(
@@ -554,11 +546,11 @@ class _ClientRevenueRow extends StatelessWidget {
           const SizedBox(width: 12),
           Expanded(
               child: Text(name,
-                  style: const TextStyle(
+                  style: TextStyle(
                       fontFamily: 'NotoSans',
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary))),
+                      color: theme.colorScheme.onSurface))),
           Text(
             CurrencyFormatter.format(revenue),
             style: const TextStyle(
@@ -627,10 +619,11 @@ class _EmptyCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -643,10 +636,10 @@ class _EmptyCard extends StatelessWidget {
       child: Center(
         child: Text(
           message ?? 'No data available yet',
-          style: const TextStyle(
+          style: TextStyle(
               fontFamily: 'NotoSans',
               fontSize: 13,
-              color: AppColors.textHint),
+              color: theme.colorScheme.outline),
         ),
       ),
     );
