@@ -7,7 +7,7 @@ import '../../core/utils/date_formatter.dart';
 import '../../modules/dashboard/dashboard_controller.dart';
 import '../../routes/app_routes.dart';
 import '../invoices/widgets/status_chip.dart';
-import 'widgets/gemini_chat_sheet.dart';
+// import 'widgets/gemini_chat_sheet.dart'; // AI chatbot — disabled
 import 'widgets/tutorial_overlay.dart';
 
 class DashboardScreen extends StatelessWidget {
@@ -24,35 +24,55 @@ class DashboardScreen extends StatelessWidget {
           backgroundColor: AppColors.background,
           appBar: AppBar(
             backgroundColor: AppColors.surface,
-            title: Obx(() => Text(
-                  c.greeting,
-                  style: const TextStyle(
-                    fontFamily: 'NotoSans',
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
+            elevation: 0,
+            automaticallyImplyLeading: false,
+            titleSpacing: 16,
+            title: Obx(() {
+              final name = c.userProfile.value?.googleDisplayName ?? 'User';
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    c.greeting,
+                    style: const TextStyle(
+                      fontFamily: 'NotoSans',
+                      fontSize: 13,
+                      fontWeight: FontWeight.w400,
+                      color: AppColors.textSecondary,
+                    ),
                   ),
-                )),
+                  Text(
+                    name,
+                    style: const TextStyle(
+                      fontFamily: 'NotoSans',
+                      fontSize: 17,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                ],
+              );
+            }),
             actions: [
               Obx(() {
                 final photoUrl = c.userProfile.value?.googlePhotoUrl;
+                final name = c.userProfile.value?.googleDisplayName ?? 'U';
                 return Padding(
                   padding: const EdgeInsets.only(right: 16),
                   child: CircleAvatar(
-                    radius: 18,
+                    radius: 20,
                     backgroundColor: AppColors.primaryLight,
                     backgroundImage:
                         photoUrl != null ? NetworkImage(photoUrl) : null,
                     child: photoUrl == null
                         ? Text(
-                            (c.userProfile.value?.googleDisplayName
-                                        ?.isNotEmpty ==
-                                    true
-                                ? c.userProfile.value!.googleDisplayName![0]
-                                : 'U'),
+                            name.isNotEmpty ? name[0].toUpperCase() : 'U',
                             style: const TextStyle(
+                              fontFamily: 'NotoSans',
                               color: AppColors.primary,
                               fontWeight: FontWeight.w700,
+                              fontSize: 15,
                             ),
                           )
                         : null,
@@ -71,7 +91,7 @@ class DashboardScreen extends StatelessWidget {
                 children: [
                   const SizedBox(height: 16),
 
-                  // ── Stats Row ─────────────────────────────────────────────
+                  // ── Stats Row ───────────────────────────────────────────
                   SizedBox(
                     key: DashboardController.statsKey,
                     height: 110,
@@ -106,10 +126,7 @@ class DashboardScreen extends StatelessWidget {
                               label: 'Overdue',
                               value: c.overdueCount.value.toString(),
                               icon: Icons.warning_amber_rounded,
-                              gradientColors: [
-                                AppColors.danger,
-                                const Color(0xFFC62828),
-                              ],
+                              gradientColors: AppColors.cardGradientRed,
                             )),
                       ],
                     ),
@@ -117,7 +134,7 @@ class DashboardScreen extends StatelessWidget {
 
                   const SizedBox(height: 20),
 
-                  // ── Quick Actions ─────────────────────────────────────────
+                  // ── Quick Actions ────────────────────────────────────────
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Column(
@@ -141,35 +158,39 @@ class DashboardScreen extends StatelessWidget {
                             physics: const NeverScrollableScrollPhysics(),
                             crossAxisSpacing: 12,
                             mainAxisSpacing: 12,
-                            childAspectRatio: 2.6,
+                            childAspectRatio: 1.35,
                             children: [
                               _QuickActionCard(
-                                icon: Icons.add_circle_outline_rounded,
+                                icon: Icons.receipt_long_rounded,
                                 label: 'New Invoice',
-                                color: AppColors.primary,
+                                iconBgColor: AppColors.primary,
                                 onTap: () =>
                                     Get.toNamed(AppRoutes.createInvoice),
                               ),
                               _QuickActionCard(
                                 icon: Icons.person_add_alt_1_rounded,
                                 label: 'Add Client',
-                                color: AppColors.accent,
+                                iconBgColor: AppColors.accent,
                                 onTap: () => Get.toNamed(AppRoutes.addClient),
                               ),
                               _QuickActionCard(
-                                icon: Icons.receipt_long_rounded,
+                                icon: Icons.list_alt_rounded,
                                 label: 'All Invoices',
-                                color: const Color(0xFF34A853),
+                                iconBgColor: AppColors.success,
                                 onTap: () {
-                                  final shell =
-                                      Get.find<dynamic>(tag: 'shell');
-                                  shell?.changePage(2);
+                                  try {
+                                    final shell =
+                                        Get.find<dynamic>(tag: 'shell');
+                                    shell?.changePage(2);
+                                  } catch (_) {
+                                    Get.toNamed(AppRoutes.invoiceList);
+                                  }
                                 },
                               ),
                               _QuickActionCard(
                                 icon: Icons.bar_chart_rounded,
                                 label: 'Reports',
-                                color: const Color(0xFFF9AB00),
+                                iconBgColor: const Color(0xFFF9AB00),
                                 onTap: () => Get.toNamed(AppRoutes.reports),
                               ),
                             ],
@@ -181,7 +202,7 @@ class DashboardScreen extends StatelessWidget {
 
                   const SizedBox(height: 20),
 
-                  // ── Recent Invoices ────────────────────────────────────────
+                  // ── Recent Invoices ──────────────────────────────────────
                   Padding(
                     key: DashboardController.recentInvoicesKey,
                     padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -201,8 +222,16 @@ class DashboardScreen extends StatelessWidget {
                               ),
                             ),
                             TextButton(
-                              onPressed: () => Get.toNamed(AppRoutes.invoiceList),
-                              child: const Text('View All'),
+                              onPressed: () =>
+                                  Get.toNamed(AppRoutes.invoiceList),
+                              child: const Text(
+                                'View All',
+                                style: TextStyle(
+                                    fontFamily: 'NotoSans',
+                                    fontSize: 13,
+                                    color: AppColors.primary,
+                                    fontWeight: FontWeight.w600),
+                              ),
                             ),
                           ],
                         ),
@@ -215,12 +244,11 @@ class DashboardScreen extends StatelessWidget {
                             children: c.recentInvoices
                                 .map((inv) => _RecentInvoiceTile(
                                       invoiceNumber: inv.invoiceNumber,
-                                      clientName:
-                                          c.clientName(inv.clientId),
+                                      clientName: c.clientName(inv.clientId),
                                       date: DateFormatter.formatLong(
                                           inv.invoiceDate),
-                                      amount: CurrencyFormatter.format(
-                                          inv.total),
+                                      amount:
+                                          CurrencyFormatter.format(inv.total),
                                       status: inv.status,
                                       onTap: () => Get.toNamed(
                                           AppRoutes.invoicePreview,
@@ -237,22 +265,31 @@ class DashboardScreen extends StatelessWidget {
             ),
           ),
 
-          // ── Gemini FAB ────────────────────────────────────────────────────
-          floatingActionButton: FloatingActionButton(
-            key: DashboardController.fabKey,
-            onPressed: () => showModalBottomSheet(
-              context: context,
-              isScrollControlled: true,
-              backgroundColor: Colors.transparent,
-              builder: (_) => const GeminiChatSheet(),
-            ),
-            backgroundColor: AppColors.primary,
-            child: const Icon(Icons.chat_bubble_outline_rounded,
-                color: Colors.white),
-          ),
+          // // ── Extended AI FAB (disabled — re-enable with Gemini chatbot) ──
+          // floatingActionButton: FloatingActionButton.extended(
+          //   key: DashboardController.fabKey,
+          //   onPressed: () => showModalBottomSheet(
+          //     context: context,
+          //     isScrollControlled: true,
+          //     backgroundColor: Colors.transparent,
+          //     builder: (_) => const GeminiChatSheet(),
+          //   ),
+          //   backgroundColor: AppColors.primary,
+          //   elevation: 4,
+          //   icon: const Icon(Icons.auto_awesome, color: Colors.white, size: 20),
+          //   label: const Text(
+          //     'Ask AI',
+          //     style: TextStyle(
+          //       fontFamily: 'NotoSans',
+          //       color: Colors.white,
+          //       fontWeight: FontWeight.w700,
+          //       fontSize: 14,
+          //     ),
+          //   ),
+          // ),
         ),
 
-        // ── Tutorial Overlay ──────────────────────────────────────────────
+        // ── Tutorial Overlay ────────────────────────────────────────────────
         Obx(() => tutorial.isVisible.value
             ? TutorialOverlay(controller: tutorial)
             : const SizedBox.shrink()),
@@ -286,11 +323,11 @@ class _StatCard extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
             color: gradientColors[0].withOpacity(0.3),
-            blurRadius: 8,
+            blurRadius: 10,
             offset: const Offset(0, 4),
           ),
         ],
@@ -299,30 +336,33 @@ class _StatCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Align(
+            alignment: Alignment.topRight,
+            child: Icon(icon, color: Colors.white70, size: 20),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(icon, color: Colors.white70, size: 20),
+              Text(
+                value,
+                style: const TextStyle(
+                  fontFamily: 'NotoSans',
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                label,
+                style: TextStyle(
+                  fontFamily: 'NotoSans',
+                  fontSize: 11,
+                  color: Colors.white.withOpacity(0.85),
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
             ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: const TextStyle(
-              fontFamily: 'NotoSans',
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-              color: Colors.white,
-            ),
-          ),
-          Text(
-            label,
-            style: TextStyle(
-              fontFamily: 'NotoSans',
-              fontSize: 11,
-              color: Colors.white.withOpacity(0.85),
-              fontWeight: FontWeight.w500,
-            ),
           ),
         ],
       ),
@@ -330,17 +370,17 @@ class _StatCard extends StatelessWidget {
   }
 }
 
-// ── Quick Action Card ─────────────────────────────────────────────────────────
+// ── Quick Action Card (vertical: icon above label) ────────────────────────────
 class _QuickActionCard extends StatelessWidget {
   final IconData icon;
   final String label;
-  final Color color;
+  final Color iconBgColor;
   final VoidCallback onTap;
 
   const _QuickActionCard({
     required this.icon,
     required this.label,
-    required this.color,
+    required this.iconBgColor,
     required this.onTap,
   });
 
@@ -348,37 +388,43 @@ class _QuickActionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: AppColors.surface,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(16),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
           decoration: BoxDecoration(
-            border: Border.all(color: AppColors.border, width: 0.5),
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
-          child: Row(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                width: 32,
-                height: 32,
+                width: 48,
+                height: 48,
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.12),
-                  borderRadius: BorderRadius.circular(8),
+                  color: iconBgColor.withOpacity(0.12),
+                  borderRadius: BorderRadius.circular(14),
                 ),
-                child: Icon(icon, color: color, size: 18),
+                child: Icon(icon, color: iconBgColor, size: 24),
               ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Text(
-                  label,
-                  style: const TextStyle(
-                    fontFamily: 'NotoSans',
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
-                  ),
+              const SizedBox(height: 10),
+              Text(
+                label,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontFamily: 'NotoSans',
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary,
                 ),
               ),
             ],
@@ -450,7 +496,7 @@ class _RecentInvoiceTile extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      '$clientName • $date',
+                      clientName,
                       style: const TextStyle(
                         fontFamily: 'NotoSans',
                         fontSize: 11,
@@ -494,12 +540,11 @@ class _EmptyInvoices extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: AppColors.border, width: 0.5),
       ),
-      child: Column(
+      child: const Column(
         children: [
-          Icon(Icons.receipt_long_outlined,
-              size: 48, color: AppColors.textHint),
-          const SizedBox(height: 12),
-          const Text(
+          Icon(Icons.receipt_long_outlined, size: 48, color: AppColors.textHint),
+          SizedBox(height: 12),
+          Text(
             'No invoices yet',
             style: TextStyle(
               fontFamily: 'NotoSans',
@@ -508,8 +553,8 @@ class _EmptyInvoices extends StatelessWidget {
               color: AppColors.textSecondary,
             ),
           ),
-          const SizedBox(height: 4),
-          const Text(
+          SizedBox(height: 4),
+          Text(
             'Create your first invoice to get started',
             style: TextStyle(
               fontFamily: 'NotoSans',

@@ -46,3 +46,11 @@ app.*.map.json
 
 # Screenshots
 /lib/Screenshots
+
+# Claude
+/.claude
+/CLAUDE.md
+/app_strings.dart
+
+# Environment secrets
+/.env

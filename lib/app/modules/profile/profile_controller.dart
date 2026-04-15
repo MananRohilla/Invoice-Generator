@@ -2,6 +2,8 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../core/utils/app_toast.dart';
+
 import '../../data/models/user_profile_model.dart';
 import '../../data/services/hive_service.dart';
 import '../../modules/auth/auth_controller.dart';
@@ -100,8 +102,7 @@ class ProfileController extends GetxController {
       await HiveService.saveProfile(p);
     }
     Get.back();
-    Get.snackbar('Saved', 'Profile updated successfully',
-        snackPosition: SnackPosition.BOTTOM);
+    AppToast.show('Profile updated successfully', title: 'Saved', type: ToastType.success);
   }
 
   void signOut() {

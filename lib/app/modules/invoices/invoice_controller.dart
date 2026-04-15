@@ -1,12 +1,19 @@
+import 'dart:typed_data';
+
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../core/utils/app_toast.dart';
 import '../../data/models/client_model.dart';
 import '../../data/models/invoice_item_model.dart';
 import '../../data/models/invoice_model.dart';
+import '../../data/models/user_profile_model.dart';
 import '../../data/services/hive_service.dart';
+import '../../data/services/pdf_service.dart';
 import '../../routes/app_routes.dart';
 
 class InvoiceListController extends GetxController {
@@ -69,8 +76,7 @@ class InvoiceListController extends GetxController {
   Future<void> deleteInvoice(String id) async {
     await HiveService.deleteInvoice(id);
     loadInvoices();
-    Get.snackbar('Deleted', 'Invoice deleted',
-        snackPosition: SnackPosition.BOTTOM);
+    AppToast.show('Invoice deleted', title: 'Deleted', type: ToastType.info);
   }
 
   @override
@@ -279,15 +285,64 @@ class CreateInvoiceController extends GetxController {
   Future<void> saveAsDraft() => _save('draft');
   Future<void> sendInvoice() => _save('sent');
 
-  Future<void> _save(String status) async {
+  Future<void> generateInvoice() async {
     if (selectedClient.value == null) {
-      Get.snackbar('Error', 'Please select a client',
-          snackPosition: SnackPosition.BOTTOM);
+      AppToast.show('Please select a client', title: 'Error', type: ToastType.error);
       return;
     }
     if (items.every((i) => i.description.trim().isEmpty)) {
-      Get.snackbar('Error', 'Add at least one line item',
-          snackPosition: SnackPosition.BOTTOM);
+      AppToast.show('Add at least one line item', title: 'Error', type: ToastType.error);
+      return;
+    }
+
+    final paid = double.tryParse(paymentMadeController.text) ?? 0;
+    InvoiceModel invoice;
+
+    if (isEditing.value && editingInvoice != null) {
+      editingInvoice!
+        ..clientId = selectedClient.value!.id
+        ..invoiceDate = _parse(invoiceDateController.text)
+        ..dueDate = _parse(dueDateController.text)
+        ..items = items.toList()
+        ..applyGst = applyGst.value
+        ..gstPercent = gstPercent.value
+        ..isInterState = isInterState.value
+        ..status = 'sent'
+        ..notes = notesController.text.trim()
+        ..terms = selectedTerms.value
+        ..paymentMade = paid;
+      await HiveService.updateInvoice(editingInvoice!);
+      invoice = editingInvoice!;
+    } else {
+      invoice = InvoiceModel(
+        id: const Uuid().v4(),
+        invoiceNumber: invoiceNumberController.text,
+        clientId: selectedClient.value!.id,
+        invoiceDate: _parse(invoiceDateController.text),
+        dueDate: _parse(dueDateController.text),
+        items: items.toList(),
+        applyGst: applyGst.value,
+        gstPercent: gstPercent.value,
+        isInterState: isInterState.value,
+        status: 'sent',
+        notes: notesController.text.trim(),
+        terms: selectedTerms.value,
+        paymentMade: paid,
+        createdAt: DateTime.now(),
+      );
+      await HiveService.addInvoice(invoice);
+    }
+
+    Get.offNamed(AppRoutes.invoiceDetails, arguments: invoice);
+  }
+
+  Future<void> _save(String status) async {
+    if (selectedClient.value == null) {
+      AppToast.show('Please select a client', title: 'Error', type: ToastType.error);
+      return;
+    }
+    if (items.every((i) => i.description.trim().isEmpty)) {
+      AppToast.show('Add at least one line item', title: 'Error', type: ToastType.error);
       return;
     }
 
@@ -328,12 +383,10 @@ class CreateInvoiceController extends GetxController {
       await HiveService.addInvoice(invoice);
       Get.back(result: invoice);
     }
-    Get.snackbar(
-      status == 'draft' ? 'Draft Saved' : 'Invoice Sent',
-      status == 'draft'
-          ? 'Invoice saved as draft'
-          : 'Invoice marked as sent',
-      snackPosition: SnackPosition.BOTTOM,
+    AppToast.show(
+      status == 'draft' ? 'Invoice saved as draft' : 'Invoice marked as sent',
+      title: status == 'draft' ? 'Draft Saved' : 'Invoice Sent',
+      type: ToastType.success,
     );
   }
 
@@ -402,9 +455,127 @@ class InvoicePreviewController extends GetxController {
     inv.paymentMade = inv.total;
     await HiveService.updateInvoice(inv);
     invoice.refresh();
-    Get.snackbar('Paid', 'Invoice marked as paid!',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: const Color(0xFF34A853),
-        colorText: const Color(0xFFFFFFFF));
+    AppToast.show('Invoice marked as paid!', title: 'Paid', type: ToastType.success);
+  }
+}
+
+class InvoiceDetailsController extends GetxController {
+  final invoice = Rxn<InvoiceModel>();
+  final client = Rxn<ClientModel>();
+  final isGeneratingPdf = false.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    final args = Get.arguments;
+    if (args is InvoiceModel) {
+      invoice.value = args;
+      client.value = HiveService.getClient(args.clientId);
+    }
+  }
+
+  void refreshInvoice() {
+    final inv = invoice.value;
+    if (inv == null) return;
+    invoice.value = HiveService.getInvoice(inv.id) ?? inv;
+    client.value = HiveService.getClient(invoice.value!.clientId);
+  }
+
+  Future<void> markAsPaid() async {
+    final inv = invoice.value;
+    if (inv == null) return;
+    inv.status = 'paid';
+    inv.paymentMade = inv.total;
+    await HiveService.updateInvoice(inv);
+    invoice.refresh();
+    AppToast.show('Invoice marked as paid!', title: 'Paid', type: ToastType.success);
+  }
+
+  Future<void> viewPdf() async {
+    await _withPdfBytes((bytes) async {
+      await Get.toNamed(
+        AppRoutes.pdfViewer,
+        arguments: {
+          'bytes': bytes,
+          'title': invoice.value?.invoiceNumber ?? 'Invoice PDF',
+        },
+      );
+    });
+  }
+
+  Future<void> downloadPdf() async {
+    await _withPdf((file) async {
+      await Share.shareXFiles(
+        [XFile(file.path)],
+        subject: '${invoice.value?.invoiceNumber}.pdf',
+      );
+    });
+  }
+
+  Future<void> shareWhatsApp() async {
+    await _withPdf((file) async {
+      await Share.shareXFiles(
+        [XFile(file.path)],
+        subject: invoice.value?.invoiceNumber,
+      );
+    });
+  }
+
+  Future<void> shareInvoiceLink() async {
+    final inv = invoice.value;
+    final c = client.value;
+    if (inv == null || c == null) return;
+    final profile = HiveService.getProfile() ??
+        UserProfileModel(businessName: 'My Business', email: '');
+    final text = '''Invoice ${inv.invoiceNumber}
+From: ${profile.businessName}
+To: ${c.name}
+Amount: ₹${inv.total.toStringAsFixed(2)}
+Due: ${inv.dueDate.day}/${inv.dueDate.month}/${inv.dueDate.year}
+Status: ${inv.status.toUpperCase()}''';
+    await Share.share(text, subject: inv.invoiceNumber);
+  }
+
+  Future<void> _withPdf(Future<void> Function(dynamic file) action) async {
+    final inv = invoice.value;
+    final c = client.value;
+    if (inv == null || c == null) return;
+    isGeneratingPdf.value = true;
+    try {
+      final profile = HiveService.getProfile() ??
+          UserProfileModel(businessName: 'My Business', email: '');
+      final file = await PdfService.generateInvoicePdf(
+        invoice: inv,
+        client: c,
+        business: profile,
+      );
+      await action(file);
+    } catch (e) {
+      AppToast.show('Could not generate PDF: $e', title: 'Error', type: ToastType.error);
+    } finally {
+      isGeneratingPdf.value = false;
+    }
+  }
+
+  Future<void> _withPdfBytes(Future<void> Function(Uint8List bytes) action) async {
+    final inv = invoice.value;
+    final c = client.value;
+    if (inv == null || c == null) return;
+    isGeneratingPdf.value = true;
+    try {
+      final profile = HiveService.getProfile() ??
+          UserProfileModel(businessName: 'My Business', email: '');
+      final file = await PdfService.generateInvoicePdf(
+        invoice: inv,
+        client: c,
+        business: profile,
+      );
+      final bytes = await file.readAsBytes();
+      await action(bytes);
+    } catch (e) {
+      AppToast.show('Could not generate PDF: $e', title: 'Error', type: ToastType.error);
+    } finally {
+      isGeneratingPdf.value = false;
+    }
   }
 }

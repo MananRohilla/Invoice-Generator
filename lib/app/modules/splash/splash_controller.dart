@@ -11,12 +11,16 @@ class SplashController extends GetxController {
   }
 
   void _navigate() {
-    final box = GetStorage();
-    if (box.read('isLoggedIn') == true) {
-      Get.offAllNamed(AppRoutes.shell);
-    } else if (box.read('isFirstLaunch') != false) {
-      Get.offAllNamed(AppRoutes.onboarding);
-    } else {
+    try {
+      final box = GetStorage();
+      if (box.read('isLoggedIn') == true) {
+        Get.offAllNamed(AppRoutes.shell);
+      } else if (box.read('isFirstLaunch') != false) {
+        Get.offAllNamed(AppRoutes.onboarding);
+      } else {
+        Get.offAllNamed(AppRoutes.login);
+      }
+    } catch (_) {
       Get.offAllNamed(AppRoutes.login);
     }
   }

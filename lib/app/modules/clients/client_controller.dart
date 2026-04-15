@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../core/utils/app_toast.dart';
 import '../../data/models/client_model.dart';
 import '../../data/services/hive_service.dart';
 import '../../routes/app_routes.dart';
@@ -57,8 +58,7 @@ class ClientController extends GetxController {
   Future<void> deleteClient(String id) async {
     await HiveService.deleteClient(id);
     loadClients();
-    Get.snackbar('Deleted', 'Client removed successfully',
-        snackPosition: SnackPosition.BOTTOM);
+    AppToast.show('Client removed successfully', title: 'Deleted', type: ToastType.info);
   }
 
   int invoiceCountForClient(String clientId) =>
@@ -118,8 +118,7 @@ class AddClientController extends GetxController {
           : gstinController.text.trim();
       await HiveService.updateClient(editingClient!);
       Get.back();
-      Get.snackbar('Updated', 'Client updated successfully',
-          snackPosition: SnackPosition.BOTTOM);
+      AppToast.show('Client updated successfully', title: 'Updated', type: ToastType.success);
     } else {
       final client = ClientModel(
         id: const Uuid().v4(),
@@ -134,8 +133,7 @@ class AddClientController extends GetxController {
       );
       await HiveService.addClient(client);
       Get.back(result: client);
-      Get.snackbar('Added', 'Client added successfully',
-          snackPosition: SnackPosition.BOTTOM);
+      AppToast.show('Client added successfully', title: 'Added', type: ToastType.success);
     }
   }
 

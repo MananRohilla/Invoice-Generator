@@ -12,6 +12,8 @@ abstract class AppRoutes {
   static const createInvoice = '/invoices/create';
   static const editInvoice = '/invoices/edit';
   static const invoicePreview = '/invoices/preview';
+  static const invoiceDetails = '/invoices/details';
+  static const pdfViewer = '/invoices/pdf-viewer';
   static const profile = '/profile';
   static const reports = '/reports';
 }

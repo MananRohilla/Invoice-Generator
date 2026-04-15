@@ -45,12 +45,18 @@ dependencies:
   # UUID
   uuid: ^4.3.3
 
+  # Environment variables
+  flutter_dotenv: ^5.2.1
+
   # HTTP (Gemini API)
   http: ^1.2.1
 
   # Share / Open
   share_plus: ^7.2.2
   open_file: ^3.3.2
+
+  # SVG rendering
+  flutter_svg: ^2.0.10+1
 
 dev_dependencies:
   flutter_test:
@@ -63,8 +69,10 @@ flutter:
   uses-material-design: true
 
   assets:
+    - .env
     - assets/animations/
     - assets/fonts/
+    - assets/google_icon.svg
 
   fonts:
     - family: NotoSans

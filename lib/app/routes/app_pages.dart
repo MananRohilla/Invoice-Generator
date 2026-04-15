@@ -12,11 +12,10 @@ import '../modules/splash/splash_controller.dart';
 import '../screens/auth/login_screen.dart';
 import '../screens/clients/add_client_screen.dart';
 import '../screens/clients/client_detail_screen.dart';
-import '../screens/clients/client_list_screen.dart';
-import '../screens/dashboard/dashboard_screen.dart';
 import '../screens/invoices/create_invoice_screen.dart';
-import '../screens/invoices/invoice_list_screen.dart';
+import '../screens/invoices/invoice_details_screen.dart';
 import '../screens/invoices/invoice_preview_screen.dart';
+import '../screens/invoices/pdf_viewer_screen.dart';
 import '../screens/onboarding/onboarding_screen.dart';
 import '../screens/profile/profile_screen.dart';
 import '../screens/reports/reports_screen.dart';
@@ -29,7 +28,7 @@ class AppPages {
     GetPage(
       name: AppRoutes.splash,
       page: () => const SplashScreen(),
-      binding: BindingsBuilder(() => Get.lazyPut(() => SplashController())),
+      binding: BindingsBuilder(() => Get.put(SplashController())),
     ),
     GetPage(
       name: AppRoutes.onboarding,
@@ -84,6 +83,16 @@ class AppPages {
       page: () => const InvoicePreviewScreen(),
       binding: BindingsBuilder(
           () => Get.lazyPut(() => InvoicePreviewController())),
+    ),
+    GetPage(
+      name: AppRoutes.invoiceDetails,
+      page: () => const InvoiceDetailsScreen(),
+      binding: BindingsBuilder(
+          () => Get.lazyPut(() => InvoiceDetailsController())),
+    ),
+    GetPage(
+      name: AppRoutes.pdfViewer,
+      page: () => const PdfViewerScreen(),
     ),
     GetPage(
       name: AppRoutes.reports,

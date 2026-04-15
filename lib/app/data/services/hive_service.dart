@@ -1,6 +1,5 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import '../models/client_model.dart';
-import '../models/invoice_item_model.dart';
 import '../models/invoice_model.dart';
 import '../models/user_profile_model.dart';
 

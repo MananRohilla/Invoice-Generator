@@ -29,24 +29,26 @@ class ShellScreen extends GetView<ShellController> {
         ),
         bottomNavigationBar: Container(
           decoration: const BoxDecoration(
+            color: AppColors.surface,
             border: Border(
-              top: BorderSide(color: AppColors.border, width: 0.5),
+              top: BorderSide(color: AppColors.divider, width: 0.8),
             ),
           ),
           child: BottomNavigationBar(
             currentIndex: controller.currentIndex.value,
+            elevation: 0,
+            backgroundColor: AppColors.surface,
             onTap: (i) {
               controller.changePage(i);
-              // Refresh data when switching tabs
               if (i == 0) Get.find<DashboardController>().loadData();
               if (i == 1) Get.find<ClientController>().loadClients();
               if (i == 2) Get.find<InvoiceListController>().loadInvoices();
             },
             items: const [
               BottomNavigationBarItem(
-                icon: Icon(Icons.dashboard_outlined),
-                activeIcon: Icon(Icons.dashboard_rounded),
-                label: 'Dashboard',
+                icon: Icon(Icons.home_outlined),
+                activeIcon: Icon(Icons.home_rounded),
+                label: 'Home',
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.people_outline_rounded),

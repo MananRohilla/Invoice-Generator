@@ -1,3 +1,7 @@
+// AI Chatbot service — temporarily disabled.
+// Uncomment the block below when re-enabling the Gemini chat feature.
+
+/*
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
@@ -54,3 +58,4 @@ class GeminiService {
 
   void clearHistory() => _history.clear();
 }
+*/

@@ -1,3 +1,7 @@
+// AI Chat Sheet — temporarily disabled.
+// Uncomment the block below when re-enabling the Gemini chat feature.
+
+/*
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../data/services/gemini_service.dart';
@@ -15,6 +19,7 @@ class _GeminiChatSheetState extends State<GeminiChatSheet> {
   final _scrollController = ScrollController();
   final _messages = <GeminiMessage>[];
   bool _isLoading = false;
+  bool _hasText = false;
 
   @override
   void initState() {
@@ -87,17 +92,17 @@ class _GeminiChatSheetState extends State<GeminiChatSheet> {
               child: Row(
                 children: [
                   Container(
-                    width: 36,
-                    height: 36,
+                    width: 40,
+                    height: 40,
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
                           colors: AppColors.cardGradientBlue),
-                      borderRadius: BorderRadius.circular(10),
+                      shape: BoxShape.circle,
                     ),
                     child: const Icon(Icons.auto_awesome,
                         color: Colors.white, size: 20),
                   ),
-                  const SizedBox(width: 10),
+                  const SizedBox(width: 12),
                   const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -105,8 +110,8 @@ class _GeminiChatSheetState extends State<GeminiChatSheet> {
                           style: TextStyle(
                               fontFamily: 'NotoSans',
                               fontWeight: FontWeight.w700,
-                              fontSize: 15)),
-                      Text('Ask me anything about invoicing',
+                              fontSize: 16)),
+                      Text('Powered by Gemini',
                           style: TextStyle(
                               fontFamily: 'NotoSans',
                               fontSize: 11,
@@ -139,45 +144,69 @@ class _GeminiChatSheetState extends State<GeminiChatSheet> {
               padding: EdgeInsets.only(
                 left: 16,
                 right: 8,
-                top: 8,
-                bottom: MediaQuery.of(context).viewInsets.bottom + 12,
+                top: 10,
+                bottom: MediaQuery.of(context).viewInsets.bottom + 14,
               ),
               decoration: const BoxDecoration(
-                border: Border(top: BorderSide(color: AppColors.border)),
+                color: AppColors.surface,
+                border: Border(
+                    top: BorderSide(color: AppColors.border, width: 0.5)),
               ),
               child: Row(
                 children: [
                   Expanded(
                     child: TextField(
                       controller: _controller,
+                      onChanged: (v) =>
+                          setState(() => _hasText = v.trim().isNotEmpty),
                       decoration: InputDecoration(
-                        hintText: 'Ask about GST, invoices, clients...',
-                        hintStyle: const TextStyle(fontSize: 13),
+                        hintText: 'Ask anything about invoicing…',
+                        hintStyle: const TextStyle(
+                            fontFamily: 'NotoSans',
+                            fontSize: 13,
+                            color: AppColors.textHint),
                         filled: true,
                         fillColor: AppColors.background,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(24),
-                          borderSide: BorderSide.none,
+                          borderSide:
+                              const BorderSide(color: AppColors.border),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(24),
+                          borderSide:
+                              const BorderSide(color: AppColors.border),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(24),
+                          borderSide: const BorderSide(
+                              color: AppColors.primary, width: 1.5),
                         ),
                         contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 10),
+                        isDense: true,
                       ),
                       onSubmitted: (_) => _send(),
                       maxLines: null,
                     ),
                   ),
                   const SizedBox(width: 8),
-                  GestureDetector(
-                    onTap: _send,
-                    child: Container(
-                      width: 42,
-                      height: 42,
-                      decoration: const BoxDecoration(
-                        color: AppColors.primary,
-                        shape: BoxShape.circle,
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    child: GestureDetector(
+                      onTap: _hasText ? _send : null,
+                      child: Container(
+                        width: 42,
+                        height: 42,
+                        decoration: BoxDecoration(
+                          color: _hasText
+                              ? AppColors.primary
+                              : AppColors.border,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.send_rounded,
+                            color: Colors.white, size: 18),
                       ),
-                      child: const Icon(Icons.send_rounded,
-                          color: Colors.white, size: 18),
                     ),
                   ),
                 ],
@@ -222,23 +251,24 @@ class _MessageBubble extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               decoration: BoxDecoration(
-                color: isUser ? AppColors.primary : AppColors.surface,
+                color: isUser ? AppColors.primaryLight : AppColors.surface,
                 borderRadius: BorderRadius.only(
                   topLeft: const Radius.circular(16),
                   topRight: const Radius.circular(16),
                   bottomLeft: Radius.circular(isUser ? 16 : 4),
                   bottomRight: Radius.circular(isUser ? 4 : 16),
                 ),
-                border: isUser
-                    ? null
-                    : Border.all(color: AppColors.border, width: 0.5),
+                border: Border.all(
+                  color: isUser ? AppColors.primary.withOpacity(0.2) : AppColors.border,
+                  width: 0.5,
+                ),
               ),
               child: Text(
                 message.text,
                 style: TextStyle(
                   fontFamily: 'NotoSans',
                   fontSize: 13,
-                  color: isUser ? Colors.white : AppColors.textPrimary,
+                  color: isUser ? AppColors.primary : AppColors.textPrimary,
                   height: 1.4,
                 ),
               ),
@@ -344,3 +374,4 @@ class _DotState extends State<_Dot> with SingleTickerProviderStateMixin {
     super.dispose();
   }
 }
+*/
